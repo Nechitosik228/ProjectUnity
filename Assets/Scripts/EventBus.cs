@@ -1,16 +1,12 @@
+using System;
 using UnityEngine;
 
-public class EventBoost : MonoBehaviour
+public class EventBus
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    public event Action<Vector2> OnMovePressed;
 
-    // Update is called once per frame
-    void Update()
+    public void TriggerMove(Vector2 data)
     {
-        
+        OnMovePressed?.Invoke(data);
     }
 }

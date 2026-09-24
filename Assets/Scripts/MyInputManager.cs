@@ -4,12 +4,16 @@ using static UnityEngine.InputSystem.InputAction;
 
 public class MyInputManager : MonoBehaviour
 {
+    private EventBus _eventBus;
     public static event Action OnSpacePressed;
     public static event Action<bool> OnAttackPressed;
     public static event Action<bool> OnShiftPressed;
-    public static event Action<Vector2> OnMovePressed;
     public static event Action<Vector2> OnLookPressed;
 
+    public void Initialize(EventBus eventBus)
+    {
+        _eventBus = eventBus;
+    }
 
     public void OnSpaceCallback(CallbackContext input)
     {
@@ -19,7 +23,7 @@ public class MyInputManager : MonoBehaviour
     public void OnMoveCallback(CallbackContext input)
     {
         Vector2 move = input.ReadValue<Vector2>();
-        OnMovePressed?.Invoke(move);
+        _eventBus.TriggerMove(move);
     }
 
     public void OnShiftCallback(CallbackContext input)
