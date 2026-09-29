@@ -4,20 +4,20 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public EventBus _eventBus { get; private set; }
-    public static GameManager Instance;
+    public static GameManager _Instance;
     public GameState _currentGameState { get; private set; } = GameState.SYSTEM;
 
     [SerializeField] private MyInputManager _inputManager;
 
     private void Awake()
     {
-        if (Instance != null)
+        if (_Instance != null)
         {
             Destroy(gameObject);
             return;
         }
         DontDestroyOnLoad(this);
-        Instance = this;
+        _Instance = this;
 
         _eventBus = new EventBus();
         _inputManager.Initialize(_eventBus);

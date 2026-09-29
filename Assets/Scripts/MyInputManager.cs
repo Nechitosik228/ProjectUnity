@@ -5,10 +5,6 @@ using static UnityEngine.InputSystem.InputAction;
 public class MyInputManager : MonoBehaviour
 {
     private EventBus _eventBus;
-    public static event Action OnSpacePressed;
-    public static event Action<bool> OnAttackPressed;
-    public static event Action<bool> OnShiftPressed;
-    public static event Action<Vector2> OnLookPressed;
 
     public void Initialize(EventBus eventBus)
     {
@@ -17,7 +13,7 @@ public class MyInputManager : MonoBehaviour
 
     public void OnSpaceCallback(CallbackContext input)
     {
-        OnSpacePressed?.Invoke();
+        _eventBus.OnSpaceTrigger();
     }
 
     public void OnMoveCallback(CallbackContext input)
@@ -30,12 +26,12 @@ public class MyInputManager : MonoBehaviour
     {
         if (input.performed)
         {
-            OnShiftPressed?.Invoke(true);
+            _eventBus.OnShiftTrigger(true);
             Debug.Log("Shift Pressed");
         }
         else if (input.canceled)
         {
-            OnShiftPressed?.Invoke(false);
+            _eventBus.OnShiftTrigger(false);
             Debug.Log("Shift Released");
         }
     }
@@ -44,17 +40,17 @@ public class MyInputManager : MonoBehaviour
     {
         if (input.started)
         {
-            OnAttackPressed?.Invoke(true);
+            _eventBus.OnAttackTrigger(true);
         }
         else if (input.canceled)
         {
-            OnAttackPressed?.Invoke(false);
+            _eventBus.OnAttackTrigger(false);
         }
     }
 
     public void OnLook(CallbackContext input)
     {
         Vector2 look = input.ReadValue<Vector2>();
-        OnLookPressed?.Invoke(look);
+        _eventBus.OnLookTrigger(look);
     }
 }
