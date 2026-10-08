@@ -31,7 +31,7 @@ public class PlayerMoveController : MonoBehaviour
 
     public void GetShiftInput(bool isPressed)
     {
-
+        _shiftInput = isPressed;
     }
 
     public void GetSpaceInput()
@@ -50,12 +50,27 @@ public class PlayerMoveController : MonoBehaviour
 
     private void Move()
     {
+        _moveVector = transform.right * _moveInput.x + transform.forward * _moveInput.y;
+        _moveVector *= _currentRunSpeed * Time.fixedDeltaTime;
+        _rb.MovePosition(_moveVector + _rb.position);
+    }
+
+    private void CalculateSpeed()
+    {
         bool isMoving = _moveInput.sqrMagnitude > 0.1f;
-        if (isMoving && !_shiftInput)
+        if (_moveInput.y < 0)
+        {
+            _currentRunSpeed = _walkSpeed / 2;
+        }
+        else if (_moveInput.x > 0 || _moveInput.x < 0)
+        {
+            _currentRunSpeed = _walkSpeed / 3;
+        }
+        else if (isMoving && !_shiftInput)
         {
             _currentRunSpeed = _walkSpeed;
         }
-        else if (isMoving && _shiftInput)
+        else if (isMoving && _shiftInput && _moveInput.y > 0)
         {
             _currentRunSpeed = _runSpeed;
         }
@@ -63,10 +78,6 @@ public class PlayerMoveController : MonoBehaviour
         {
             _currentRunSpeed = 0;
         }
-        // float currentSpeed = _isRunning ? _runSpeed : _walkSpeed;
-        _moveVector = transform.right * _moveInput.x + transform.forward * _moveInput.y;
-        _moveVector *= _walkSpeed * Time.fixedDeltaTime;
-        _rb.MovePosition(_moveVector + _rb.position);
     }
 
     #endregion
@@ -75,6 +86,7 @@ public class PlayerMoveController : MonoBehaviour
 
     private void Update()
     {
+        CalculateSpeed();
         Move();
         UpdateAnimation();
     }
