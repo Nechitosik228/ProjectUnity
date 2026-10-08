@@ -50,6 +50,19 @@ public class PlayerMoveController : MonoBehaviour
 
     private void Move()
     {
+        bool isMoving = _moveInput.sqrMagnitude > 0.1f;
+        if (isMoving && !_shiftInput)
+        {
+            _currentRunSpeed = _walkSpeed;
+        }
+        else if (isMoving && _shiftInput)
+        {
+            _currentRunSpeed = _runSpeed;
+        }
+        else
+        {
+            _currentRunSpeed = 0;
+        }
         // float currentSpeed = _isRunning ? _runSpeed : _walkSpeed;
         _moveVector = transform.right * _moveInput.x + transform.forward * _moveInput.y;
         _moveVector *= _walkSpeed * Time.fixedDeltaTime;
@@ -72,7 +85,7 @@ public class PlayerMoveController : MonoBehaviour
 
     private void UpdateAnimation()
     {
-
+        _animationController.RunningAnim(_currentRunSpeed, _moveInput);
     }
 
     #endregion
