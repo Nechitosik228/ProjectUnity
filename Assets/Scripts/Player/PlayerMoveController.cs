@@ -50,9 +50,18 @@ public class PlayerMoveController : MonoBehaviour
 
     private void Move()
     {
-        _moveVector = transform.right * _moveInput.x + transform.forward * _moveInput.y;
-        _moveVector *= _currentRunSpeed * Time.fixedDeltaTime;
-        _rb.MovePosition(_moveVector + _rb.position);
+        float moveX = _moveInput.x * transform.right.x;
+        float moveZ = _moveInput.y * transform.right.z;
+        Vector3 linearVelocity = new Vector3(moveX, 0f, moveZ) * _currentRunSpeed * Time.fixedDeltaTime;
+        _rb.linearVelocity = linearVelocity;
+        // _moveVector = transform.right * _moveInput.x + transform.forward * _moveInput.y;
+        // _moveVector *= _currentRunSpeed * Time.fixedDeltaTime;
+        // _rb.MovePosition(_moveVector + _rb.position);
+    }
+
+    private void FixedUpdate()
+    {
+        Move();
     }
 
     private void CalculateSpeed()
@@ -87,7 +96,6 @@ public class PlayerMoveController : MonoBehaviour
     private void Update()
     {
         CalculateSpeed();
-        Move();
         UpdateAnimation();
     }
 
