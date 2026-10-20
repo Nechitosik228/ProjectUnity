@@ -9,6 +9,7 @@ public class MyPlayerController : MonoBehaviour
     [SerializeField] private PlayerCameraController _cameraController;
     [SerializeField] private PlayerMoveController _moveController;
     [SerializeField] private PlayerShootController _shootController;
+    [SerializeField] private GroundDetector _groundDetector;
 
 
     private void OnEnable()
@@ -41,7 +42,8 @@ public class MyPlayerController : MonoBehaviour
 
     private void OnLookInput(Vector2 input)
     {
-
+        if (_isDead) return;
+        _cameraController.RotateCamera(input);
     }
 
     private void OnAttackInput(bool isPressed)
@@ -59,5 +61,12 @@ public class MyPlayerController : MonoBehaviour
     {
         if (_isDead) return;
         _moveController.GetSpaceInput();
+    }
+
+    private void FixedUpdate()
+    {
+        if (_isDead) return;
+        bool isGrounded = _groundDetector.isGrounded();
+        _moveController.GetGroundInfo(isGrounded);
     }
 }

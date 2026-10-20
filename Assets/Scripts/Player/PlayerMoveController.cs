@@ -6,6 +6,8 @@ public class PlayerMoveController : MonoBehaviour
     private Vector3 _moveVector;
     private bool _shiftInput;
     private bool _ctrlInput;
+    private bool _isGrounded;
+    private bool _isJumpQeued = false;
     private PlayerAnimationController _animationController;
 
     [Header("Walking Logic")]
@@ -13,8 +15,10 @@ public class PlayerMoveController : MonoBehaviour
     [SerializeField] private Rigidbody _rb;
     [SerializeField] private float _walkSpeed;
     [SerializeField] private float _runSpeed;
+    [SerializeField] private float _jumpForce;
 
     private float _currentRunSpeed;
+    private WalkState _currentWalkingState = 0;
 
     public void Initialize(PlayerAnimationController a)
     {
@@ -36,12 +40,21 @@ public class PlayerMoveController : MonoBehaviour
 
     public void GetSpaceInput()
     {
-
+        if (!_isGrounded) return;
+        // _rb.AddForce(new Vector3(0f, _jumpForce, 0f), ForceMode.Impulse);
+        _isJumpQeued = true;
+        // _rb.linearVelocity = new Vector3(0f, _jumpForce, 0f);
     }
 
     public void GetCtrlInput(bool isPressed)
     {
 
+    }
+
+    public void GetGroundInfo(bool t)
+    {
+        _isGrounded = t;
+        Debug.Log(t);
     }
 
     #endregion
@@ -50,9 +63,15 @@ public class PlayerMoveController : MonoBehaviour
 
     private void Move()
     {
-        float moveX = _moveInput.x * transform.right.x;
-        float moveZ = _moveInput.y * transform.right.z;
-        Vector3 linearVelocity = new Vector3(moveX, 0f, moveZ) * _currentRunSpeed * Time.fixedDeltaTime;
+        float moveX = _moveInput.x * transform.right.x * _currentRunSpeed * Time.fixedDeltaTime;
+        float moveZ = _moveInput.y * transform.forward.z * _currentRunSpeed * Time.fixedDeltaTime;
+        float moveY = _rb.linearVelocity.y;
+        if (_isJumpQeued && _isGrounded)
+        {
+            moveY = _jumpForce;
+            _isJumpQeued = false;
+        }
+        Vector3 linearVelocity = new Vector3(moveX, moveY, moveZ);
         _rb.linearVelocity = linearVelocity;
         // _moveVector = transform.right * _moveInput.x + transform.forward * _moveInput.y;
         // _moveVector *= _currentRunSpeed * Time.fixedDeltaTime;
@@ -64,29 +83,56 @@ public class PlayerMoveController : MonoBehaviour
         Move();
     }
 
+    private float GetMoveSpeed(WalkState state)
+    {
+        float newSpeed = 0;
+        switch (state)
+        {
+            case WalkState.Standing:
+                break;
+            case WalkState.Walk:
+                newSpeed = _walkSpeed;
+                break;
+            case WalkState.SideWalking:
+                newSpeed = _walkSpeed / 2;
+                break;
+            case WalkState.BackWalking:
+                newSpeed = _walkSpeed / 2;
+                break;
+        }
+        _currentWalkingState = state;
+        return newSpeed;
+    }
+
     private void CalculateSpeed()
     {
         bool isMoving = _moveInput.sqrMagnitude > 0.1f;
-        if (_moveInput.y < 0)
-        {
-            _currentRunSpeed = _walkSpeed / 2;
-        }
-        else if (_moveInput.x > 0 || _moveInput.x < 0)
-        {
-            _currentRunSpeed = _walkSpeed / 3;
-        }
-        else if (isMoving && !_shiftInput)
-        {
-            _currentRunSpeed = _walkSpeed;
-        }
-        else if (isMoving && _shiftInput && _moveInput.y > 0)
-        {
-            _currentRunSpeed = _runSpeed;
-        }
-        else
+
+        if (!isMoving)
         {
             _currentRunSpeed = 0;
+            return;
         }
+
+        float newSpeed = 0;
+        if (_moveInput.y < 0)
+        {
+            newSpeed = GetMoveSpeed(WalkState.BackWalking);
+        }
+        else if (_moveInput.y > 0)
+        {
+            newSpeed = GetMoveSpeed(WalkState.Walk);
+        }
+        else if (_moveInput.y == 0 && _moveInput.x != 0)
+        {
+            newSpeed = GetMoveSpeed(WalkState.SideWalking);
+        }
+
+        if (_shiftInput)
+        {
+            newSpeed *= _runSpeed / _walkSpeed;
+        }
+        _currentRunSpeed = newSpeed;
     }
 
     #endregion
@@ -109,4 +155,14 @@ public class PlayerMoveController : MonoBehaviour
     }
 
     #endregion
+}
+
+
+public enum WalkState
+{
+    Standing = 0,
+    Walk = 1,
+    SideWalking = 2,
+    BackWalking = 3,
+    Running = 4
 }
