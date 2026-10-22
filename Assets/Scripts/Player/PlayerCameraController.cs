@@ -10,27 +10,28 @@ public class PlayerCameraController : MonoBehaviour
 
     private float _rotationX;
     private float _rotationY;
-    private float _currentRotationX;
-    private float _currentRotationY;
 
     private void Start()
     {
         Vector3 angles = _cameraPivot.localEulerAngles;
-        _rotationX = angles.x;
-        _rotationY = angles.y;
+        _rotationX = angles.x > 180f ? angles.x - 360f : angles.x;
+        _rotationY = angles.y > 180f ? angles.y - 360f : angles.y;
     }
 
     public void RotateCamera(Vector2 input)
     {
-        Debug.Log(input);
-        float mouseX = input.y * _rotationSpeed;
-        float mouseY = input.x * _rotationSpeed;
+        if (input.sqrMagnitude < 0.1f) return;
+        // Debug.Log(input);
+        _rotationX -= input.y * _rotationSpeed;
+        _rotationY += input.x * _rotationSpeed;
+        // Debug.Log(_currentRotationX);
+        _rotationX = Mathf.Clamp(_rotationX, -_maxCameraPitch, _maxCameraPitch);
+        _rotationY = Mathf.Clamp(_rotationY, -_maxCameraYaw, _maxCameraYaw);
+        Debug.Log(_rotationX);
+    }
 
-        _currentRotationX = _cameraPivot.rotation.x + mouseX;
-        _currentRotationY = _cameraPivot.rotation.y + mouseY;
-        Debug.Log(_currentRotationX);
-        _currentRotationX = Mathf.Clamp(_currentRotationX, -_maxCameraPitch, _maxCameraPitch);
-
-        _cameraPivot.localRotation = Quaternion.Euler(_currentRotationX, _currentRotationY, 0);
+    private void LateUpdate()
+    {
+        _cameraPivot.localRotation = Quaternion.Euler(_rotationX, _rotationY, 0);
     }
 }
