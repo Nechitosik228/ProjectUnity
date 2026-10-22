@@ -7,9 +7,11 @@ public class PlayerCameraController : MonoBehaviour
     [SerializeField] private float _maxCameraYaw = 50f;
     [SerializeField] private float _maxCameraPitch = 60f;
     [SerializeField] private float _returnSpeed = 3f;
+    [SerializeField] private float _returnDelay = 10f;
 
     private float _rotationX;
     private float _rotationY;
+    private float _lastActionTimer;
 
     private void Start()
     {
@@ -21,17 +23,24 @@ public class PlayerCameraController : MonoBehaviour
     public void RotateCamera(Vector2 input)
     {
         if (input.sqrMagnitude < 0.1f) return;
-        // Debug.Log(input);
+
         _rotationX -= input.y * _rotationSpeed;
         _rotationY += input.x * _rotationSpeed;
-        // Debug.Log(_currentRotationX);
+
         _rotationX = Mathf.Clamp(_rotationX, -_maxCameraPitch, _maxCameraPitch);
         _rotationY = Mathf.Clamp(_rotationY, -_maxCameraYaw, _maxCameraYaw);
-        Debug.Log(_rotationX);
+        _lastActionTimer = Time.time;
     }
 
     private void LateUpdate()
     {
         _cameraPivot.localRotation = Quaternion.Euler(_rotationX, _rotationY, 0);
+    }
+
+    private void Update()
+    {
+        if (Time.time - _lastActionTimer < _returnDelay) return;
+        _rotationX = Mathf.MoveTowards(_rotationX, 0, _returnSpeed * Time.deltaTime * 10f);
+        _rotationY = Mathf.MoveTowards(_rotationY, 0, _returnSpeed * Time.deltaTime * 10f);
     }
 }

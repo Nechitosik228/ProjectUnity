@@ -9,6 +9,7 @@ public class PlayerMoveController : MonoBehaviour
     private bool _isGrounded;
     private bool _isJumpQeued = false;
     private PlayerAnimationController _animationController;
+    private float _lookInput;
 
     [Header("Walking Logic")]
 
@@ -16,6 +17,7 @@ public class PlayerMoveController : MonoBehaviour
     [SerializeField] private float _walkSpeed;
     [SerializeField] private float _runSpeed;
     [SerializeField] private float _jumpForce;
+    [SerializeField] private float _rotationSpeed;
 
     private float _currentRunSpeed;
     private WalkState _currentWalkingState = 0;
@@ -31,6 +33,12 @@ public class PlayerMoveController : MonoBehaviour
     {
         _moveInput = input;
         _moveInput.Normalize();
+    }
+
+    public void GetLookInput(Vector2 input)
+    {
+        if (input.sqrMagnitude < 0.1f) return;
+        _lookInput = input.x;
     }
 
     public void GetShiftInput(bool isPressed)
@@ -76,6 +84,12 @@ public class PlayerMoveController : MonoBehaviour
         // _moveVector = transform.right * _moveInput.x + transform.forward * _moveInput.y;
         // _moveVector *= _currentRunSpeed * Time.fixedDeltaTime;
         // _rb.MovePosition(_moveVector + _rb.position);
+    }
+
+    private void RotatePlayer()
+    {
+        Vector3 newRotation = new Vector3(transform.rotation.x, transform.rotation.y + (_lookInput * _rotationSpeed), transform.rotation.z) * Time.deltaTime;
+        transform.Rotate(newRotation);
     }
 
     private void FixedUpdate()
@@ -143,6 +157,7 @@ public class PlayerMoveController : MonoBehaviour
     {
         CalculateSpeed();
         UpdateAnimation();
+        RotatePlayer();
     }
 
     #endregion

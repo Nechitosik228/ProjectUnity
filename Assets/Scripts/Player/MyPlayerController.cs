@@ -43,6 +43,7 @@ public class MyPlayerController : MonoBehaviour
     private void OnLookInput(Vector2 input)
     {
         if (_isDead) return;
+        _moveController.GetLookInput(input);
         _cameraController.RotateCamera(input);
     }
 
