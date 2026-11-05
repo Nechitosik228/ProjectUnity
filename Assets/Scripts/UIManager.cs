@@ -12,11 +12,6 @@ public class UIManager : MonoBehaviour
         _eventBus.OnGameStateChanged += OnGameStateChanged;
     }
 
-    private void Awake()
-    {
-
-    }
-
     private void UIChangeRequest(UIState newState)
     {
         if (_currentUIState == newState) return;
@@ -39,10 +34,13 @@ public class UIManager : MonoBehaviour
         switch (newState)
         {
             case GameState.GAME:
+                UIChangeRequest(UIState.GAME);
                 break;
             case GameState.MENU:
+                UIChangeRequest(UIState.MENU);
                 break;
             case GameState.LOADING:
+                UIChangeRequest(UIState.LOADING);
                 break;
         }
     }
