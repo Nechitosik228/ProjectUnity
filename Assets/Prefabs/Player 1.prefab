@@ -2284,6 +2284,7 @@ MonoBehaviour:
   _walkSpeed: 200
   _runSpeed: 500
   _jumpForce: 10
+  _rotationSpeed: 20
 --- !u!54 &8498486136368698378
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2336,10 +2337,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCameraController
   _cameraPivot: {fileID: 4141814362186342954}
-  _rotationSpeed: 5
+  _rotationSpeed: 2
   _maxCameraYaw: 50
   _maxCameraPitch: 60
   _returnSpeed: 3
+  _returnDelay: 10
 --- !u!114 &1177667303193365447
 MonoBehaviour:
   m_ObjectHideFlags: 0

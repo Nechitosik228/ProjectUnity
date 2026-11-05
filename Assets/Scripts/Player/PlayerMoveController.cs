@@ -1,3 +1,4 @@
+using UnityEditor.Callbacks;
 using UnityEngine;
 
 public class PlayerMoveController : MonoBehaviour
@@ -37,7 +38,11 @@ public class PlayerMoveController : MonoBehaviour
 
     public void GetLookInput(Vector2 input)
     {
-        if (input.sqrMagnitude < 0.1f) return;
+        if (input.sqrMagnitude < 0.1f)
+        {
+            _lookInput = 0f;
+            return;
+        }
         _lookInput = input.x;
     }
 
@@ -71,15 +76,15 @@ public class PlayerMoveController : MonoBehaviour
 
     private void Move()
     {
-        float moveX = _moveInput.x * transform.right.x * _currentRunSpeed * Time.fixedDeltaTime;
-        float moveZ = _moveInput.y * transform.forward.z * _currentRunSpeed * Time.fixedDeltaTime;
+        Vector3 moveX = (_moveInput.x * transform.right + _moveInput.y * transform.forward) * Time.fixedDeltaTime * _currentRunSpeed;
+        // float moveZ = _moveInput.y * transform.forward.z * _currentRunSpeed * Time.fixedDeltaTime;
         float moveY = _rb.linearVelocity.y;
         if (_isJumpQeued && _isGrounded)
         {
             moveY = _jumpForce;
             _isJumpQeued = false;
         }
-        Vector3 linearVelocity = new Vector3(moveX, moveY, moveZ);
+        Vector3 linearVelocity = new Vector3(0, moveY, 0) + moveX;
         _rb.linearVelocity = linearVelocity;
         // _moveVector = transform.right * _moveInput.x + transform.forward * _moveInput.y;
         // _moveVector *= _currentRunSpeed * Time.fixedDeltaTime;
