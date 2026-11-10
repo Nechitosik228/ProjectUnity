@@ -5,11 +5,13 @@ public class UIManager : MonoBehaviour
     public EventBus _eventBus { get; private set; }
     public UIState _currentUIState { get; private set; } = UIState.SYSTEM;
 
+    private ButtonType _type;
+
     public void Initialize(EventBus eventBus)
     {
         _eventBus = eventBus;
-        _eventBus.OnUIChangeRequest += UIChangeRequest;
         _eventBus.OnGameStateChanged += OnGameStateChanged;
+        _eventBus.OnButtonType += GetButtonType;
     }
 
     private void UIChangeRequest(UIState newState)
@@ -26,7 +28,7 @@ public class UIManager : MonoBehaviour
         }
 
         _currentUIState = newState;
-        _eventBus.OnUIChangeRequestTrigger(newState);
+        _eventBus.OnUIStateChangeTrigger(newState);
     }
 
     private void OnGameStateChanged(GameState newState)
@@ -44,6 +46,25 @@ public class UIManager : MonoBehaviour
                 break;
         }
     }
+
+    private void GetButtonType(ButtonType type)
+    {
+        GameState state = GameManager.Instance._currentGameState;
+        switch (type)
+        {
+            case ButtonType.GAME:
+                if (state == GameState.MENU)
+                {
+                    _eventBus.OnGameChangeRequestTrigger(GameState.GAME);
+                }
+                break;
+            case ButtonType.MENU:
+                break;
+            case ButtonType.SETTINGS:
+                UIChangeRequest(UIState.SETTINGS);
+                break;
+        }
+    }
 }
 
 
@@ -52,5 +73,6 @@ public enum UIState
     SYSTEM = 0,
     GAME = 1,
     MENU = 2,
-    LOADING = 3
+    LOADING = 3,
+    SETTINGS = 4,
 }

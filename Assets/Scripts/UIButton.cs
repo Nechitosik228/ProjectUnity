@@ -4,22 +4,35 @@ using UnityEngine.UI;
 
 public abstract class UIButton : MonoBehaviour
 {
-    [SerializeField] internal int _i = 1;
-    [SerializeField] private Button _button;
+    [SerializeField] protected Button _button;
     [SerializeField] private TMP_Text _textField;
-    [SerializeField] private UIState _state;
-    protected abstract void Integer();
-    protected virtual void OnClick()
-    {
-        Debug.Log(_i);
-    }
+    [SerializeField] protected ButtonType _type;
 
-    private void Update()
-    {
-        OnUpdate();
-    }
+    protected EventBus _eventBus;
 
-    protected virtual void OnUpdate()
+    private void Awake()
+    {
+        Initialize();
+    }
+    public virtual void Initialize()
+    {
+        _eventBus = GameManager.Instance._eventBus;
+        _button.onClick.AddListener(SendPayLoad);
+        SetText();
+    }
+    private void DeInitialize()
+    {
+        _button.onClick.RemoveListener(SendPayLoad);
+    }
+    private void OnDestroy()
+    {
+        DeInitialize();
+    }
+    private void SetText()
+    {
+        _textField.text = _type.ToString();
+    }
+    protected virtual void SendPayLoad()
     {
 
     }
@@ -28,5 +41,8 @@ public abstract class UIButton : MonoBehaviour
 
 public enum ButtonType
 {
-
+    DEFAULT = 0,
+    MENU = 1,
+    GAME = 2,
+    SETTINGS = 3,
 }

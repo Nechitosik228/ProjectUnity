@@ -11,7 +11,7 @@ public class EventBus
     public event Action<GameState> OnGameStateChanged;
     public event Action<GameState> OnGameChangeRequest;
     public event Action<UIState> OnUIStateChanged;
-    public event Action<UIState> OnUIChangeRequest;
+    public event Action<ButtonType> OnButtonType;
 
     public void TriggerMove(Vector2 data)
     {
@@ -53,8 +53,8 @@ public class EventBus
         OnUIStateChanged.Invoke(newState);
     }
 
-    public void OnUIChangeRequestTrigger(UIState newState)
+    public void OnButtonClickTrigger(ButtonType type)
     {
-        OnUIChangeRequest.Invoke(newState);
+        OnButtonType.Invoke(type);
     }
 }

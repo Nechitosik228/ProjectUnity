@@ -1,25 +1,15 @@
 using UnityEngine;
+using DG.Tweening;
 
 public class MainMenuButton : UIButton
 {
-    private void Start()
+    public override void Initialize()
     {
-        OnClick();
+        base.Initialize();
     }
-    protected override void Integer()
+    protected override void SendPayLoad()
     {
-        Debug.Log(_i += 1);
-    }
-
-    protected override void OnClick()
-    {
-        Debug.Log("Hello World");
-        base.OnClick();
-    }
-
-    protected override void OnUpdate()
-    {
-        base.OnUpdate();
-        Debug.Log("Gogogogo");
+        _eventBus.OnButtonClickTrigger(_type);
+        base.SendPayLoad();
     }
 }
