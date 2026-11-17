@@ -14,13 +14,13 @@ public abstract class UIButton : MonoBehaviour
     {
         Initialize();
     }
-    public virtual void Initialize()
+    protected virtual void Initialize()
     {
         _eventBus = GameManager.Instance._eventBus;
         _button.onClick.AddListener(SendPayLoad);
         SetText();
     }
-    private void DeInitialize()
+    protected virtual void DeInitialize()
     {
         _button.onClick.RemoveListener(SendPayLoad);
     }
