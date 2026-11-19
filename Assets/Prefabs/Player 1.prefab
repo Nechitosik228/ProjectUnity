@@ -2105,6 +2105,7 @@ MonoBehaviour:
   _moveController: {fileID: 103273195823822245}
   _shootController: {fileID: 4646950905193546829}
   _groundDetector: {fileID: 1351646130671049950}
+  _interactor: {fileID: 7938932210033365071}
 --- !u!114 &103273195823822245
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2242,7 +2243,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f7766a67c6ea8645947f7a63f17ede1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Interactor
-  _interactDistance: 3
+  _interactDistance: 0.1
   _interactableLayer:
     serializedVersion: 2
     m_Bits: 256

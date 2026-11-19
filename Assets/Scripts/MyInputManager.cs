@@ -22,6 +22,11 @@ public class MyInputManager : MonoBehaviour
         _eventBus.TriggerMove(move);
     }
 
+    public void OnInteractCallback(CallbackContext input)
+    {
+        if (input.started) _eventBus.OnInteractTrigger();
+    }
+
     public void OnShiftCallback(CallbackContext input)
     {
         if (input.performed)

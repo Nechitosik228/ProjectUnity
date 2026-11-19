@@ -12,6 +12,7 @@ public class EventBus
     public event Action<GameState> OnGameChangeRequest;
     public event Action<UIState> OnUIStateChanged;
     public event Action<ButtonType> OnButtonType;
+    public event Action OnInteractPressed;
 
     public void TriggerMove(Vector2 data)
     {
@@ -36,6 +37,11 @@ public class EventBus
     public void OnLookTrigger(Vector2 data)
     {
         OnLookPressed?.Invoke(data);
+    }
+
+    public void OnInteractTrigger()
+    {
+        OnInteractPressed?.Invoke();
     }
 
     public void OnGameStateChangeTrigger(GameState newState)
