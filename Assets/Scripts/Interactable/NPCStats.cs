@@ -28,3 +28,6 @@ public enum NPCName
 }
 
 public static class Consts
+{
+    public const int _enemyStart = 500;
+}
