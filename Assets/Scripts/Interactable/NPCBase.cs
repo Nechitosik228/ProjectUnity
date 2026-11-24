@@ -1,16 +1,34 @@
+using System;
+using System.ComponentModel;
 using UnityEngine;
 
-public class NPCBase : MonoBehaviour
+public abstract class NPCBase : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public NPCType _type { get; private set; }
+    public NPCName _name { get; private set; }
+
+    public virtual void Initialize(NPCStats stats)
     {
-        
+        _type = stats.Type;
+        _name = stats.Name;
     }
 
-    // Update is called once per frame
-    void Update()
+    protected abstract void OnTickAi(float dt);
+    protected abstract void OnTickPhysics(float dt);
+    protected abstract void OnTickAnim(float dt);
+
+    private void Update()
     {
-        
+        OnTickAi(Time.deltaTime);
+    }
+
+    private void FxedUpdate()
+    {
+        OnTickPhysics(Time.fixedDeltaTime);
+    }
+
+    private void LateUpdate()
+    {
+        OnTickAnim(Time.deltaTime);
     }
 }
